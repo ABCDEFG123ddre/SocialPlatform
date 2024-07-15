@@ -1,0 +1,27 @@
+{% extends 'base.html'%}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block main %}
+    <form action="/signup/" method="post" class="form-inline" role="form">
+        <div class="form-group">
+            {% csrf_token %}
+            <label for="uName">Username</label>
+            <input class="form-control" id="uName" type="text" name="uName"><br><br>
+            <label for="uPass">Password</label>
+            <input class="form-control" id="uPass" type="password" name="uPass"><br><br>
+            <label for="uGender">Gender&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <label for="uGenderM">Male</label>
+            <input class="form-control" id="uGenderM" type="radio" name="uGender" value="M">
+            <label for="uGenderF">Female</label>
+            <input class="form-control" id="uGenderF" type="radio" name="uGender" value="F"><br><br>
+            <label for="uBirthday">Birthday</label>
+            <input class="form-control" id="uBirthday" type="date" name="uBirthday"><br><br>
+            {% if msg%}
+            <h5 style="color:rgb(255, 128, 0); font-weight: 400;">{{msg}}</h5>
+            {% endif %}
+            <input class="btn btn-info" type="submit" value="Submit">
+        </div>
+    </form><br><br>
+    <h4>Already have an account? <br>Sign in to get started! <a href="/login/" style="color:rgb(215, 200, 253)">Sign In</a></h4>
+{% endblock %}

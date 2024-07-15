@@ -1,0 +1,122 @@
+{% extends 'basePersonal.html'%}
+{% load static %}
+{% block sidebar %}
+<div class="sidebar">
+    <div class="sidebar-text d-flex flex-column h-100 justify-content-center text-center">
+        {% if unit %}
+        <img class="mx-auto d-block w-75 bg-primary img-fluid rounded-circle mb-4 p-3" src="{{img}}" alt="Image">
+        <h1 class="font-weight-bold">{{ unit.cName }}</h1>
+        <p class="mb-4" style="white-space: pre-wrap; white-space: pre-line; text-align: left;">
+            Gender: {% if unit.cSex == 'F' %} Female {% else %} Male {% endif %}
+            Birthday: {{ unit.cBirthday }}<br>
+            {{ unit.introduction }}
+            <a href="editInfo/">Edit</a>
+        </p>
+        {% endif %}
+    </div>
+    <div class="sidebar-icon d-flex flex-column h-100 justify-content-center text-right">
+        <i class="fas fa-2x fa-angle-double-right text-primary"></i>
+    </div>
+</div>
+{% endblock %}
+
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href="/personal/{{unit.cName}}/" class="nav-item nav-link">Home</a>
+    <a href="" class="nav-item nav-link active">Inbox</a>
+    <a href="/personal/{{unit.cName}}/forum/" class="nav-item nav-link">Forum</a>
+    <a href="/personal/{{unit.cName}}/search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .info {padding: 20px;  background-color: #88c6f9; color: black; border-radius: 10px; margin: 10px;}  
+    .closebtn {margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px; line-height: 20px;  cursor: pointer;  transition: 0.3s;}
+    .closebtn:hover {color: black; }
+    .infobutton{border: none; background: none;color: rgb(15, 2, 64); font-weight: bold; float: right;}
+    .infobutton:hover{color: rgb(255, 2, 2);}
+    </style>
+    <div class="container bg-white pt-5">
+        <div class="row px-3 pb-5">
+            <div class="col-md-12">
+                <h3 id="result">You have {{count}} messages unreplied</h3><br><br>
+                {% if newmsg != "None" %}
+                    {% for m in newmsg %}
+                        <div class="info">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                            <strong>Invitation: </strong> {{m.invitor}} invited you to join Group "{{m.groupName}}"
+                            <button class="infobutton" onclick=declineinvitation()>Decline</button><button class="infobutton" onclick=acceptinvitation()>Accept</button>
+                            <form action=" " method="post" role="form" id="inviteform" style="display: none;">
+                                {% csrf_token %}
+                                <input type="text" value="" id="inputValue1" name="accepted"/>
+                                <input type="text" value="{{m.groupid}}" name="ID"/>
+                                <input type="submit" value="create form" style="visibility:hidden" />
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if followRequest != "None" %}
+                    {% for m in followRequest %}
+                        <div class="info">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                            <strong>Request: </strong> {{m.invitor}} requested to follow you.
+                            <button class="infobutton" onclick='declinefollow("{{m.invitor}}")'>Decline</button><button class="infobutton" onclick='acceptfollow("{{m.invitor}}")'>Accept</button>
+                            <form action=" " method="post" role="form" id="followform" style="display: none;">
+                                {% csrf_token %}
+                                <input type="text" value="" id="inputValue2" name="allowed"/>
+                                <input type="text" value="{{m.invitor}}" id="follow" name="follow"/>
+                                <input type="submit" value="create form" style="visibility:hidden" />
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <hr />
+                <h3 id="result">Notify</h3>
+                {% if inboxmsg != "None" %}
+                    {% for m in inboxmsg %}
+                        <div class="info">
+                            <form action=" " method="post" role="form" id="Inboxform" style="display: none;">
+                                {% csrf_token %}
+                                <input type="text" value="{{m.content}}" id="inboxMsg" name="deleteInbox"/>
+                                <input type="submit" value="create form" style="visibility:hidden" />
+                            </form>
+                            <span class="infobutton fa fa-trash" onclick='deleteInbox()'></span> 
+                            <strong>Notify: </strong> {{m.content}}
+                            <a id="link" href = "{{m.link}}">(check it out)</a>
+                            <p id="linkerr" style="color: red;"></p>
+                            <i style="float: right;">{{m.time}}</i>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script>
+        function deleteInbox(){
+            document.forms['Inboxform'].submit();
+        }
+        function acceptinvitation(){
+            document.querySelector('#inputValue1').value = 'accepted' ;
+            document.forms['inviteform'].submit();
+            
+        }
+        function declineinvitation(){
+            document.querySelector('#inputValue1').value = 'declined' ;
+            document.forms['inviteform'].submit();
+        }
+        function acceptfollow(fname){
+            document.querySelector('#inputValue2').value = 'accepted' ;
+            document.querySelector('#follow').value =fname;
+            document.forms['followform'].submit();
+            
+        }
+        function declinefollow(fname){
+            document.querySelector('#inputValue2').value = 'declined' ;
+            document.querySelector('#follow').value =fname;
+            document.forms['followform'].submit();
+        }
+    </script>
+{% endblock %}

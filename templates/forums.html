@@ -1,0 +1,75 @@
+{% extends 'basePersonal.html'%}
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href=".." class="nav-item nav-link">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="" class="nav-item nav-link active">Forum</a>
+    <a href="../search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-5 px-4">
+        <div class="col-sm-6 text-center text-md-left">
+            <h1 class="mb-3 mb-md-0 text-white text-uppercase font-weight-bold">Forums</h1>
+        </div>
+        <div class="col-sm-6 text-center text-md-right">
+            <h4 class="m-0 text-white">See what's new here!</h4>
+        </div>
+    </div>
+    <form action=" " method="post" role="form">
+        {% csrf_token %}
+        <label for="cars" style="color: white;">Forum Types:</label>
+        <select name="types" id="types">
+            <option value="--">--</option>
+            <option value="學業">學業</option>
+            <option value="生活">生活</option>
+            <option value="個人">個人</option>
+            <option value="心情">心情</option>
+            <option value="公告">公告</option>
+            <option value="其他">其他</option>
+        </select>
+        <input type="text" placeholder="Search.." name="search">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12 py-4">
+            <div>
+                {% if forums %}
+                {% for forum in forums %}
+                <div class="media-body">
+                    <a href="{{forum.id}}" class = "font-weight-bold" style="font-size: 20px;">{{ forum.title }}</a>
+                    <i>&nbsp;&nbsp;&nbsp;&nbsp;{{forum.types}}</i>
+                    {% if forum.anonymous is False %}
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp;Posted by {{forum.name}}&nbsp;&nbsp;&nbsp;&nbsp;
+                            <small>Replied: {{forum.count}}</small>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <small><i>{{forum.time}}</i></small>
+                        </h5>
+                    {% else %}
+                        <h5>&nbsp;&nbsp;&nbsp;&nbsp; Posted by Anonymous&nbsp;&nbsp;&nbsp;&nbsp;
+                            <small>Replied: {{forum.count}}</small>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <small><i>{{forum.time}}</i></small>
+                        </h5>
+                    {% endif %}
+                </div>
+                <hr />
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <a href="../createForum/" >Create a Forum</a>
+</div>
+{% endblock %}
+            

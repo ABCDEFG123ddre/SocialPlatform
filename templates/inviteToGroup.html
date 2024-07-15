@@ -1,0 +1,66 @@
+{% extends 'basePersonal.html'%}
+
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href="../../.." class="nav-item nav-link">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="../../../inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="../../../inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="/personal/{{username}}/forum/" class="nav-item nav-link active">Forum</a>
+    <a href="/personal/{{username}}/search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-5 px-4">
+        <div class="col-sm-6 text-center text-md-left">
+            <h1 class="mb-3 mb-md-0 text-white text-uppercase font-weight-bold">Invite</h1>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+    .submitform {border: none; background: none; font-size: medium; }
+</style>
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12">
+            {% if inviteFail != "False" %}
+                <h4 style="color: red;">Invite Failed: {{inviteFail}}</h4>
+            {% endif %}
+            {% if following != "None" %}
+                <h3>Following</h3>
+                {% for f in following %}
+                <form action=" " method="post" id="inviteform1">
+                    {% csrf_token %}
+                    <span class="fa fa-plus" style="color: cornflowerblue; font-size: small;"></span>
+                    <input type="submit" value="{{f.following}}" name="inviteperson1" class="submitform" />
+                </form>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12">
+            {% if followed != "None" %}
+                <h3>Followers</h3>
+                {% for f in followed %}
+                <form action=" " method="post" id="inviteform2">
+                    {% csrf_token %}
+                    <span class="fa fa-plus" style="color: cornflowerblue; font-size: small;"></span>
+                    <input type="submit" value="{{f.name}}" name="inviteperson2" class="submitform"/>
+                </form>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

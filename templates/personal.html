@@ -1,0 +1,217 @@
+{% extends 'basePersonal.html'%}
+{% load static %}
+{% block sidebar %}
+<div class="sidebar">
+    <div class="sidebar-text d-flex flex-column h-100 justify-content-center text-center">
+        {% if unit %}
+        <img class="mx-auto d-block w-75 bg-primary img-fluid rounded-circle mb-4 p-3" src="{{img}}" alt="Image">
+        <h1 class="font-weight-bold">{{ unit.cName }}</h1>
+        <p class="mb-4" style="white-space: pre-wrap; white-space: pre-line; text-align: left;">
+            Gender: {% if unit.cSex == 'F' %} Female {% else %} Male {% endif %}
+            Birthday: {{ unit.cBirthday }}<br>
+            {{ unit.introduction }}
+            <a href="editInfo/">Edit</a>
+        </p>
+        {% endif %}
+    </div>
+    <div class="sidebar-icon d-flex flex-column h-100 justify-content-center text-right">
+        <i class="fas fa-2x fa-angle-double-right text-primary"></i>
+    </div>
+</div>
+{% endblock %}
+
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href="" class="nav-item nav-link active">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="forum/" class="nav-item nav-link">Forum</a>
+    <a href="search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-5 px-4">
+        <div class="col-sm-6 text-center text-md-left">
+            <h1 class="mb-3 mb-md-0 text-white text-uppercase font-weight-bold">Dashboard</h1>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container bg-white pt-5">
+    <div class="row px-3 pb-5">
+        <h2>Your Forums</h2>
+        <div class="col-md-12">
+            {% if not forums%}
+            <h4>You haven't started any discussion yet.</h4>
+            <a href="createForum/">Click here to start one.</a>
+            {% else %}
+            {% for forum in forums %}
+            <div>
+                <a href="forum/{{forum.id}}" class = "font-weight-bold" style="font-size: 20px;">{{ forum.title }}</a>
+                <i>&nbsp;&nbsp;&nbsp;&nbsp;{{forum.types}}</i>
+                <p style="float: right; font-size: 15px;">
+                    Replied: {{forum.count}}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {{forum.time}}&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="submit" onclick="deleteForum('{{forum.id}}')" class="fa fa-trash" style="margin-left: 50px; color: rgb(63, 93, 149); border:none; background: none;"></button>
+                </p>
+                <hr />
+            </div><br>
+            {% endfor %}
+            <a href="createForum/">Create Forum</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- Group Chat -->
+
+<div class="container bg-white pt-5">
+  <div class="row px-3 pb-5">
+    <h2>Group</h2>
+    <div class="col-md-12">
+    {% if groups %}
+    <div style="float: left; width: 350px;">
+      <h4>Direct Messages</h4>
+      {% for group in groups %}
+        {% if group.count <= 2%}
+          <p class="m-0">
+            <a href="Group/{{group.groupid}}/" target=”_blank” style="font-size: 16px;">{{ group.groupName }} ({{group.count}})</a>
+            {% if group.isAdmin is True %}
+              <a href="changeGroupName/{{group.groupid}}"  style="margin-left: 30px; color: rgb(63, 93, 149); border:none; background: none;">Rename</a>
+              <button type="submit" onclick="deleteGroup('{{group.groupid}}')"  class="fa fa-trash" style="margin-left: 10px; color: rgb(63, 93, 149); border:none; background: none;"></button>
+            {% endif %}
+          </p>
+        {% endif %}
+      {% endfor %}
+      <br><br>
+      <a href="createGroup/">Create Group</a>
+    </div>
+    <div style="float: left;">
+      <h4>Group Chat</h4>
+      {% for group in groups %}
+        {% if group.count > 2%}
+          <p class="m-0">
+            <a href="Group/{{group.groupid}}/" target=”_blank” style="font-size: 16px;">{{ group.groupName }} ({{group.count}})</a>
+            {% if group.isAdmin is True %}
+              <a href="changeGroupName/{{group.groupid}}"  style="margin-left: 30px; color: rgb(63, 93, 149); border:none; background: none;">Rename</a>
+              <button type="submit" onclick="deleteGroup('{{group.groupid}}')"  class="fa fa-trash" style="margin-left: 10px; color: rgb(63, 93, 149); border:none; background: none;"></button>
+            {% endif %}
+          </p>
+        {% endif %}
+      {% endfor %}
+    </div> 
+
+    {% else %}
+      <h4>You haven't have any group yet.</h4>
+      <a href="createGroup/">Click here to start one.</a> 
+    {% endif %}
+    </div>
+  </div>
+</div>
+
+
+<div class="container bg-white pt-5" style="float: left;">
+    <div class="row px-3 pb-5" style="float: left; margin-right: 60px;">
+        <h2>Following ({{fcount}})</h2>
+        <div class="col-md-12">
+            {% if fcount == 0%}
+            <h4>You haven't followed anyone.</h4>
+            {% else %}
+            {% for f in following %}
+            <p class="m-0">
+                <a href="/{{unit.cName}}/{{f.following}}">{{ f.following }}</a>
+            </p>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row px-3 pb-5" style="float: left;">
+      <h2>Followers ({{fdcount}})</h2>
+          <div class="col-md-12">
+              {% if fdcount == 0%}
+              <h4>You haven't been followed by anyone.</h4>
+              {% else %}
+              {% for f in followed %}
+              <p class="m-0">
+                  <a href="/{{unit.cName}}/{{f.name}}">{{ f.name }}</a>
+              </p>
+              {% endfor %}
+              {% endif %}
+          </div>
+    </div>
+</div>
+
+<script>
+    function deleteGroup(gid){
+        window.location.href = "deleteGroup/"+gid;
+    }
+    function deleteForum(fid){
+        window.location.href = "deleteForum/"+fid;
+    }
+    function myFunction() {
+      var x = document.getElementById("msgbox").autofocus;
+      document.getElementById("test").innerHTML = x;
+    }
+    //Make the DIV element draggagle:
+    dragElement(document.getElementById("mydiv"));
+    
+    function dragElement(elmnt) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      if (document.getElementById(elmnt.id + "header")) {
+        /* if present, the header is where you move the DIV from:*/
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+      } else {
+        /* otherwise, move the DIV from anywhere inside the DIV:*/
+        elmnt.onmousedown = dragMouseDown;
+      }
+    
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+    
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+    
+      function closeDragElement() {
+        /* stop moving when mouse button is released:*/
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+    function openForm() {
+      document.getElementById("myForm").style.display = "block";
+      document.getElementsByClassName("open-button").style.display = "none";
+    }
+    
+    function closeForm() {
+      document.getElementById("myForm").style.display = "none";
+      document.getElementsByClassName("open-button").style.display = "display";
+    }
+    </script>
+{% endblock %}
+
+

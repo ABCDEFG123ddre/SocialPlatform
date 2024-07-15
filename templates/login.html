@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+
+{% block title %}Sign In{% endblock %}
+{% block main %}
+    <form action="/login/" class="form-inline" role="form" method="post">
+        <div class="form-group">
+            {% csrf_token %}
+            <label for="uName">Username</label>
+            <input class="form-control" id="uName" type="text" name="uName"><br><br>
+            <label for="uPass">Password</label>
+            <input class="form-control" id="uPass" type="password" name="uPass"><br><br>
+            {% if msg%}
+            <h5 style="color:rgb(255, 128, 0); font-weight: 400;">{{msg}}</h5>
+            {% endif %}
+            <input type="submit" class="btn btn-info">
+        </div>
+    </form>
+    <br><br>      
+    <h4>Haven't have any account?<br> Sign up for free <a href="/signup/" style="color:rgb(215, 200, 253)" >Sign Up</a></h4>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'basePersonal.html'%}
+
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href="../" class="nav-item nav-link">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="/personal/{{username}}/forum/" class="nav-item nav-link">Forum</a>
+    <a href=" " class="nav-item nav-link active">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-5 px-4">
+        <div class="search-container">
+            <form action=" " method="post" class="form-inline" role="form">
+                {% csrf_token %}
+                <input type="text" placeholder="Search.." name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12">
+            {% if people != "None" %}
+                <h3>{{count}} Search Result</h3>
+                {% for p in people %}
+                <p class="m-0">
+                    <a href="/{{username}}/{{p.cName}}">{{ p.cName }}</a>
+                </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    function invite1(){
+        document.forms['inviteform1'].submit();
+    }
+    function invite2(){
+        document.forms['inviteform2'].submit();
+    }
+</script>
+{% endblock %}

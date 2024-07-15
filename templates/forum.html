@@ -1,0 +1,94 @@
+{% extends 'basePersonal.html'%}
+
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href=".." class="nav-item nav-link">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="../inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="/personal/{{username}}/forum/" class="nav-item nav-link active">Forum</a>
+    <a href="../search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-5 px-4">
+        <div class="col-sm-6 text-center text-md-left">
+            <h1 class="mb-3 mb-md-0 text-white text-uppercase font-weight-bold">Title: {{forum.title}}</h1>
+            <h5 style="color: rgb(202, 199, 199); font-style: italic;">{{forum.types}}</h5>
+        </div>
+        <div class="col-sm-6 text-center text-md-right">
+            <div class=" pt-2">
+                {% if forum.anonymous is False %}
+                    <h4 class="m-0 text-white">Posted by <a class="text-white" href="/{{username}}/{{forum.name}}">{{forum.name}}</a></h4>
+                {% endif %}
+                <h4 class="m-0 text-white">{{forum.time}}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12">
+            <h5 style="white-space: pre-wrap; white-space: pre-line;">{{forum.content}}</h5>
+        </div>
+        <div class="col-12 py-4">
+            <br>
+            <h3 class="mb-4 font-weight-bold">{{count}} Comments</h3>
+            <div>
+                {% if comment %}
+                {% for c in comment %}
+                <div class="media-body">
+                    {% if c.anonymous is False %}
+                        <h5><a href="/{{username}}/{{c.name}}">{{c.name}}</a>&nbsp;&nbsp;&nbsp;&nbsp;<small><i>{{c.time}}</i></small></h5>
+                    {% else %}
+                        <h5>Anonymous&nbsp;&nbsp;&nbsp;&nbsp;<small><i>{{c.time}}</i></small></h5>
+                    {% endif %}
+                    <p style="white-space: pre-wrap; white-space: pre-line;">{{c.content}}</p>
+                    <form action=" " method="post" role="form" id="likeform" style="display: none;">
+                        {% csrf_token %}
+                        <input type="text" value="{{c.id}}" name="likecomment"/>
+                        <input type="submit" style="visibility:hidden" />
+                    </form>
+                    {% if c.isLiking is True %}
+                        <p><button class="fa fa-heart" style="color: red; border: none; background: none;" onclick="like('{{c.id}}')"></button>&nbsp;&nbsp;{{c.like}}</p>
+                    {% else %}
+                        <p><button class="fa fa-heart" style="color: grey; border: none; background: none;" onclick="like('{{c.id}}')"></button>&nbsp;&nbsp;{{c.like}}</p>
+                    {% endif %}
+                </div>
+                <hr />
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-12">
+            <h3 class="mb-4 font-weight-bold">Leave a comment</h3>
+            <form action=" " method="post" role="form">
+                <div class="form-group">
+                    {% csrf_token %}
+                    <label for="content">Comment</label>
+                    <textarea class="form-control" id="content" type="text" name="content" maxlength="1000"></textarea><br>
+                    <div class="form-inline">
+                        <label for="anonymous" >Anonymous&nbsp;</label>
+                        <input class="form-control" id="anonymous" type="checkbox" name="anonymous" value="True"><br><br>
+                    </div>
+                    <input class="btn btn-info" type="submit" value="Submit">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function like(likeID){
+        var loc = window.location.pathname;
+        window.location.replace(loc+'/'+likeID);
+    }
+</script>
+{% endblock %}

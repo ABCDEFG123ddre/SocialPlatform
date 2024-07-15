@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+
+{% block title %}Create Forum{% endblock %}
+{% block main %}
+<form action=" " method="post" role="form">
+    <div class="form-group">
+        {% csrf_token %}
+        <label for="title">Forum Title</label>
+        <input class="form-control" id="title" type="text" name="title"><br>
+        <label for="content">Forum Content</label>
+        <textarea class="form-control" id="content" type="text" name="content" maxlength="1000"></textarea><br>
+        <label for="cars">Forum Types </label>
+        <select name="types" id="types" style="color: black; border-radius: 5px;">
+            <option value="學業">學業</option>
+            <option value="生活">生活</option>
+            <option value="個人">個人</option>
+            <option value="心情">心情</option>
+            <option value="公告">公告</option>
+            <option value="其他">其他</option>
+        </select>
+        <div class="form-inline">
+            <label for="anonymous" >Anonymous</label>
+            <input class="form-control" id="anonymous" type="checkbox" name="anonymous" value="True"><br><br>
+        </div>
+        <input class="btn btn-info" type="submit" value="Submit">
+    </div>
+</form>
+{% endblock %}

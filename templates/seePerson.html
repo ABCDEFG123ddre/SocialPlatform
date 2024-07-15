@@ -1,0 +1,88 @@
+{% extends 'basePersonal.html'%}
+{% block menu %}
+<div class="navbar-nav m-auto">
+    <a href="/personal/{{username}}/" class="nav-item nav-link">Home</a>
+    {% if haveMsg == "True" %}
+    <a href="/personal/{{username}}/inbox/" class="nav-item nav-link">Inbox <span class="fa fa-exclamation-circle" style="color: rgb(255, 32, 32);"></span></a>
+    {% else %}
+    <a href="/personal/{{username}}/inbox/" class="nav-item nav-link">Inbox</a>
+    {% endif %}
+    <a href="/personal/{{username}}/forum/" class="nav-item nav-link">Forum</a>
+    <a href="/personal/{{username}}/search/" class="nav-item nav-link">Search</a>
+    <a href="/login/" class="nav-item nav-link" style="margin-left: 300px;">Sign Out</a>
+</div>
+{% endblock %}
+
+{% block title %}
+<div class="container py-5 px-2 bg-primary">
+    <div class="row py-8 px-4">
+        <div style="float: left;">
+            <img class="mx-auto d-block bg-primary img-fluid rounded-circle" style="width: 100px;" src="{{img}}" alt="Image">
+        </div>
+        <div class="col-sm-10 text-center text-md-left">
+            <br>
+            <h1 class="mb-3 mb-md-0 text-white text-uppercase font-weight-bold" >{{p.cName}}</h1>
+            <br>
+            <h5 style="white-space: pre-wrap; white-space: pre-line;" class="text-white">{{p.introduction}}</h5><br>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 px-2 bg-white">
+    <div class="row px-4">
+        <div class="col-12 py-4">
+            <div>
+                <div class="media-body">
+                    {% if following == "True" %}
+                    <h4 style="display: inline-block;">You are following {{p.cName}}</h4>
+                    <form action="follow/" method="post" role="form" style=" float: right;">
+                        {% csrf_token %}
+                        <input type="hidden" name="unfollow" id="unfollow" value = "{{p.cName}}">
+                        <input type="submit" value="Unfollow">
+                    </form>
+                    {% elif following == "False" %}
+                        {% if followrequest == "True" %}
+                            <h4>You have requested to follow {{p.cName}}</h4>
+                        {% else %}
+                            <h4 style="display: inline-block;">You haven't followed {{p.cName}}</h4>
+                            <form action="follow/" method="post" role="form" style="float: right;">
+                                {% csrf_token %}
+                                <input type="hidden" name="follow" id="follow" value = "{{p.cName}}">
+                                <input type="submit" value="Follow">
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <hr /><br>
+            <h2>{{p.cName}}'s Forums</h2>
+            {% if not forums%}
+            <h4>{{p.cName}} doesn't have any unanonymous forum </h4>
+            {% else %}
+            {% for forum in forums %}
+            <div>
+                <a href="/personal/{{username}}/forum/{{forum.id}}" class = "font-weight-bold" style="font-size: 20px;">{{ forum.title }}</a>
+                <p style="float: right; font-size: 15px;">
+                    Replied: {{forum.count}}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {{forum.time}}
+                </p>
+            </div><br>
+            {% endfor %}
+            {% endif %}
+            <hr /><br>
+            <h2>Following</h2>
+            {% if not isfollowing%}
+            <h4>{{p.cName}} haven't followed anyone</h4>
+            {% else %}
+            {% for f in isfollowing %}
+            <div>
+                <a href="/{{username}}/{{f.following}}" style="font-size: 15px;">{{ f.following }}</a>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
